@@ -99,6 +99,7 @@ sub end_item_text {
 sub end_L {
     my ($self, $attribute_hash) = @_;
     if ($self->{link_type} eq 'pod') {
+        $self->{in_cdata} = 0;
         $self->_print( 
             ']]></ac:plain-text-link-body>' .
             '</ac:link>');
@@ -235,17 +236,21 @@ sub start_L {
     my ($self, $attribute_hash) = @_;
     $self->{link_type} = $attribute_hash->{type};
     if ($attribute_hash->{type} eq 'pod') {
-        if ($self->{packages_in_space}{"$attribute_hash->{to}"}) {
+        my $to = $attribute_hash->{to};
+        if (!$to || $self->{packages_in_space}{"$to"}) {
             $self->{link_type} = 'pod';
             $self->_print( 
                 ($attribute_hash->{section}
                     ? "<ac:link ac:anchor='$attribute_hash->{section}'>"
                     : '<ac:link>') .
-                "<ri:page ri:content-title='$attribute_hash->{to}' ri:space-key='$self->{space_key}'/>" .
+                ($to
+                    ? "<ri:page ri:content-title='$to' ri:space-key='$self->{space_key}'/>"
+                    : '') .
                 '<ac:plain-text-link-body><![CDATA[');
+            $self->{in_cdata} = 1;
         }
         else {
-            my $url = "https://metacpan.org/pod/$attribute_hash->{to}";
+            my $url = $to ? "https://metacpan.org/pod/$to" : '';
             my $section = $attribute_hash->{section};
             if ($section) {
                 $section =~ s/[^a-zA-Z0-9]+/-/g;

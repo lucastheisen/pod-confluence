@@ -8,7 +8,7 @@ use File::Spec;
 use Pod::Confluence::TestUtil qw(
     write_pod
 );
-use Test::More tests => 16;
+use Test::More tests => 18;
 
 BEGIN {use_ok('Pod::Confluence')}
 
@@ -163,6 +163,38 @@ is_parsed(q[
     'page link with section',
     space_key => 'CP',
     packages_in_space => ['Foo::Bar']);
+ 
+is_parsed(q[
+    =pod
+
+    Link to L</sec> section.
+
+    =cut
+    ], 
+    '<p><ac:structured-macro ac:name=\'toc\' ac:schema-version=\'1\' /></p>' .
+    '<p>Link to ' .
+    '<ac:link ac:anchor=\'sec\'>' .
+    '<ac:plain-text-link-body><![CDATA["sec"]]></ac:plain-text-link-body>' .
+    '</ac:link>' .
+    ' section.</p>',
+    'section link',
+    space_key => 'CP');
+
+is_parsed(q[
+    =pod
+
+    Link to L<name|/sec> section.
+
+    =cut
+    ], 
+    '<p><ac:structured-macro ac:name=\'toc\' ac:schema-version=\'1\' /></p>' .
+    '<p>Link to ' .
+    '<ac:link ac:anchor=\'sec\'>' .
+    '<ac:plain-text-link-body><![CDATA[name]]></ac:plain-text-link-body>' .
+    '</ac:link>' .
+    ' section.</p>',
+    'section link with name',
+    space_key => 'CP');
 
 is_parsed(q[
     =pod
