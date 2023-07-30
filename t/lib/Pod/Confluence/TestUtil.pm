@@ -1,3 +1,4 @@
+package Pod::Confluence::TestUtil;
 use strict;
 use warnings;
 
@@ -8,6 +9,7 @@ our @EXPORT_OK = qw(
     slurp
     spurt
     write_pod
+    pod_string
 );
 
 sub slurp {
