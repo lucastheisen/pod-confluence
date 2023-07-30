@@ -6,7 +6,7 @@ use lib 't/lib';
 use File::Basename;
 use File::Spec;
 use Pod::Confluence::TestUtil qw(
-    write_pod
+    pod_string
 );
 use Test::More tests => 18;
 
